@@ -1,0 +1,1036 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="UTF-8" />
+  <title>e點通 Demo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Noto Sans TC", "Segoe UI", sans-serif;
+      background: #e3edf7;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      min-height: 100vh;
+      padding: 24px 8px;
+    }
+
+    /* Phone frame */
+    .phone {
+      width: 360px;
+      max-width: 100%;
+      background: #f7f9fb;
+      border-radius: 28px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+      overflow: hidden;
+      position: relative;
+      /* 固定手機高度 */
+      height: 760px;
+
+      --primary-blue: #4a9fe6;
+      --primary-blue-dark: #2f6ca0;
+      --secondary-light-blue: #e8f4fb;
+      --secondary-gray-blue: #7a8fa3;
+      --text-primary: #333333;
+      --text-secondary: #666666;
+      --text-light: #999999;
+      --up-red: #e55252;
+      --down-green: #27a65b;
+      --bg-body: #f7f9fb;
+      --bg-card: #ffffff;
+      --dark-panel: #111821;
+      --dark-panel-soft: #1c2633;
+      --accent-pink: #01319d;
+      --deep-red-bg: #38010d;
+    }
+
+    .status-bar {
+      height: 18px;
+      background: #000;
+      opacity: 0.9;
+    }
+
+    .app-header {
+      background: linear-gradient(180deg, var(--primary-blue-dark), var(--primary-blue));
+      padding: 8px 12px 10px;
+      color: #fff;
+    }
+
+    .header-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .header-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .header-icon-circle {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    /* Market tabs */
+    .market-tabs {
+      display: flex;
+      gap: 6px;
+      margin-top: 4px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+    }
+
+    .market-tab {
+      flex: 0 0 auto;
+      padding: 4px 10px;
+      border-radius: 14px;
+      font-size: 12px;
+      background: rgba(255, 255, 255, 0.18);
+      color: #eaf4ff;
+      white-space: nowrap;
+      cursor: pointer;
+      border: 1px solid transparent;
+    }
+
+    .market-tab.active {
+      background: #ffffff;
+      color: var(--primary-blue-dark);
+      border-color: rgba(0, 0, 0, 0.06);
+      font-weight: 600;
+    }
+
+    .app-body {
+      background: var(--bg-body);
+      padding: 8px 10px 60px;
+      height: calc(100% - 18px - 58px);
+      overflow-y: auto;
+    }
+
+    .screen {
+      display: none;
+    }
+
+    .screen.active {
+      display: block;
+    }
+
+    /* 第一頁：我的資產卡片與原本介面 */
+    .asset-card {
+      background: var(--accent-pink);
+      color: #fff;
+      border-radius: 10px 10px 6px 6px;
+      padding: 10px 12px;
+      margin-bottom: 8px;
+      cursor: pointer;
+    }
+
+    .asset-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      margin-bottom: 6px;
+    }
+
+    .asset-header span {
+      font-weight: 600;
+    }
+
+    .dots {
+      letter-spacing: 3px;
+      font-size: 16px;
+    }
+
+    .asset-lines {
+      font-size: 12px;
+      line-height: 1.5;
+    }
+
+    /* Dark panel with calendar */
+    .dark-panel {
+      background: var(--dark-panel);
+      border-radius: 8px;
+      padding: 10px 10px 12px;
+      color: #d3d9e3;
+      margin-bottom: 10px;
+    }
+
+    .calendar-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 11px;
+    }
+
+    .calendar-day {
+      flex: 1;
+      text-align: center;
+      padding: 4px 0;
+      border-radius: 5px;
+      margin: 0 1px;
+      cursor: pointer;
+    }
+
+    .calendar-day.active {
+      background: var(--secondary-light-blue);
+      color: #111821;
+      font-weight: 600;
+    }
+
+    .calendar-info {
+      background: var(--dark-panel-soft);
+      border-radius: 6px;
+      padding: 8px;
+      font-size: 11px;
+      line-height: 1.4;
+      color: #c4ceda;
+    }
+
+    /* Section title row */
+    .section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: var(--text-secondary);
+      margin: 4px 0 4px;
+      padding: 0 2px;
+    }
+
+    .section-header strong {
+      color: var(--text-primary);
+      font-size: 13px;
+    }
+
+    .section-header a {
+      text-decoration: none;
+      color: var(--primary-blue-dark);
+      font-size: 11px;
+    }
+
+    /* Feature grid */
+    .feature-grid {
+      background: var(--bg-card);
+      border-radius: 10px;
+      padding: 8px 4px 4px;
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      grid-row-gap: 10px;
+      font-size: 11px;
+    }
+
+    .feature-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 4px 2px;
+      cursor: pointer;
+    }
+
+    .feature-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: var(--secondary-light-blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 4px;
+      font-size: 16px;
+      color: var(--primary-blue-dark);
+    }
+
+    .feature-label {
+      line-height: 1.3;
+    }
+
+    /* Dark footer panel with numbers (簡化版) */
+    .market-summary {
+      margin-top: 10px;
+      background: var(--dark-panel);
+      border-radius: 8px;
+      padding: 6px 8px;
+      font-size: 11px;
+      color: #d3d9e3;
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+    }
+
+    .market-col {
+      flex: 1;
+      text-align: center;
+    }
+
+    .market-col-title {
+      margin-bottom: 3px;
+    }
+
+    .market-value {
+      color: #ffffff;
+      font-weight: 600;
+      margin-bottom: 2px;
+    }
+
+    .market-change {
+      font-size: 10px;
+    }
+
+    .market-change.up {
+      color: var(--down-green);
+    }
+
+    .market-change.down {
+      color: var(--up-red);
+    }
+
+    /* Bottom navigation */
+    .bottom-nav {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 52px;
+      background: #ffffff;
+      border-top: 1px solid #dde3ec;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      font-size: 11px;
+    }
+
+    .nav-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-secondary);
+      cursor: pointer;
+    }
+
+    .nav-icon {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 1px solid transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 2px;
+      font-size: 14px;
+    }
+
+    .nav-item.active {
+      color: var(--primary-blue-dark);
+      font-weight: 600;
+    }
+
+    .nav-item.active .nav-icon {
+      border-color: var(--primary-blue-dark);
+      background: var(--secondary-light-blue);
+    }
+
+    /* 第二頁：資產明細畫面 */
+    #screenAsset {
+      background: linear-gradient(180deg, #01559f, #150008);
+      color: #fff;
+      border-radius: 10px;
+      padding: 10px 8px 80px;
+    }
+
+    .asset-detail-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .asset-detail-header-title {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .back-btn {
+      border: none;
+      background: rgba(0, 0, 0, 0.3);
+      color: #fff;
+      border-radius: 999px;
+      padding: 4px 10px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .asset-detail-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      margin-bottom: 6px;
+    }
+
+    .asset-month {
+      font-weight: 600;
+    }
+
+    .chart-toggle {
+      display: flex;
+      gap: 4px;
+    }
+
+    .chart-toggle-btn {
+      border: none;
+      border-radius: 999px;
+      padding: 4px 8px;
+      font-size: 11px;
+      cursor: pointer;
+      background: rgba(0, 0, 0, 0.35);
+      color: #f2f2f2;
+    }
+
+    .chart-toggle-btn.active {
+      background: #ffffff;
+      color: #b5001d;
+      font-weight: 600;
+    }
+
+    .chart-bars {
+      height: 130px;
+      background: rgba(0, 0, 0, 0.45);
+      border-radius: 8px;
+      padding: 12px 8px 6px;
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      gap: 2px;
+      margin-bottom: 10px;
+    }
+
+    .bar-group {
+      flex: 1;
+      position: relative;
+      height: 100%;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: flex-end;
+    }
+
+    .bar-label {
+      position: absolute;
+      bottom: -14px;
+      font-size: 9px;
+      color: #f4d3d8;
+    }
+
+    .bar {
+      width: 40%;
+      border-radius: 4px 4px 0 0;
+      position: absolute;
+      bottom: 12px;
+    }
+
+    .bar-market {
+      background: #ff5a6a; /* 紅：總市值 */
+      right: 6px;
+    }
+
+    .bar-cost {
+      background: #3a7bd5; /* 藍：總成本 */
+      left: 6px;
+    }
+
+    .bar-group.active .bar-market,
+    .bar-group.active .bar-cost {
+      box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.6);
+    }
+
+    .asset-toggle-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 11px;
+    }
+
+    .toggle-buttons {
+      display: inline-flex;
+      background: rgba(0, 0, 0, 0.4);
+      border-radius: 999px;
+      padding: 2px;
+    }
+
+    .pill-btn {
+      border: none;
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-size: 11px;
+      background: transparent;
+      color: #f2f2f2;
+      cursor: pointer;
+    }
+
+    .pill-btn.active {
+      background: #ffffff;
+      color: #b5001d;
+      font-weight: 600;
+    }
+
+    .asset-range-row {
+      display: flex;
+      justify-content: flex-start;
+      gap: 6px;
+      margin-bottom: 8px;
+    }
+
+    .asset-summary-cards {
+      margin-top: 6px;
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 6px;
+      font-size: 12px;
+    }
+
+    .summary-card {
+      border-radius: 6px;
+      padding: 6px 8px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .summary-market {
+      background: #f9d1b0;
+      color: #4a2c08;
+    }
+
+    .summary-cost {
+      background: #2f6ca0;
+      color: #ffffff;
+    }
+
+    .summary-profit {
+      background: #ffe1a6;
+      color: #5c3d03;
+    }
+
+    .summary-label {
+      font-weight: 600;
+    }
+
+    .summary-value {
+      font-family: "Roboto Mono", monospace;
+      font-size: 14px;
+    }
+
+    .summary-value.positive {
+      color: #0f9d58;
+    }
+
+    .summary-value.negative {
+      color: #d93025;
+    }
+  </style>
+</head>
+<body>
+  <div class="phone">
+    <div class="status-bar"></div>
+
+    <!-- Header -->
+    <header class="app-header">
+      <div class="header-top">
+        <div class="header-title">
+          <div class="header-icon-circle">✉</div>
+          <span>帳務首頁</span>
+          <span>|</span>
+          <span>e點通</span>
+        </div>
+        <div class="header-actions">
+          <div class="header-icon-circle">🔔</div>
+          <div class="header-icon-circle">⚙</div>
+        </div>
+      </div>
+
+      <div class="market-tabs" id="marketTabs">
+        <div class="market-tab active">台股</div>
+        <div class="market-tab">海外股市</div>
+        <div class="market-tab">期權</div>
+        <div class="market-tab">國外期貨</div>
+        <div class="market-tab">基金</div>
+      </div>
+    </header>
+
+    <!-- Body -->
+    <main class="app-body">
+      <!-- 第一頁：首頁 -->
+      <section id="screenHome" class="screen active">
+        <!-- Asset card -->
+        <section class="asset-card" id="assetCard">
+          <div class="asset-header">
+            <span>我的資產</span>
+            <span class="dots">•••</span>
+          </div>
+          <div class="asset-lines">
+            <div>資產總現值 (NTD)</div>
+            <div>戶頭餘額 (NTD)</div>
+          </div>
+        </section>
+
+        <!-- Dark panel -->
+        <section class="dark-panel">
+          <div class="calendar-row" id="calendarRow">
+            <div class="calendar-day active">
+              <div>週一</div>
+              <div>25</div>
+            </div>
+            <div class="calendar-day">
+              <div>週二</div>
+              <div>26</div>
+            </div>
+            <div class="calendar-day">
+              <div>週三</div>
+              <div>27</div>
+            </div>
+            <div class="calendar-day">
+              <div>週四</div>
+              <div>28</div>
+            </div>
+            <div class="calendar-day">
+              <div>週五</div>
+              <div>29</div>
+            </div>
+          </div>
+          <div class="calendar-info">
+            法說會、重大公告、ETF 調整、投資展望等資訊示意文字⋯⋯
+          </div>
+        </section>
+
+        <!-- Frequent functions -->
+        <div class="section-header">
+          <strong>常用功能</strong>
+          <a href="#">更多 &gt;</a>
+        </div>
+
+        <section class="feature-grid">
+          <div class="feature-item">
+            <div class="feature-icon">💰</div>
+            <div class="feature-label">台股下單</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🌎</div>
+            <div class="feature-label">海外股票</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">📊</div>
+            <div class="feature-label">行情報價</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">📈</div>
+            <div class="feature-label">ETF 導覽</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🔍</div>
+            <div class="feature-label">自選追蹤</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">🧾</div>
+            <div class="feature-label">覆盤日記</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">❤️</div>
+            <div class="feature-label">心理測驗</div>
+          </div>
+          <div class="feature-item">
+            <div class="feature-icon">⚙</div>
+            <div class="feature-label">更多功能</div>
+          </div>
+        </section>
+
+        <!-- Market summary -->
+        <section class="market-summary">
+          <div class="market-col">
+            <div class="market-col-title">加權</div>
+            <div class="market-value">21536.67</div>
+            <div class="market-change up">+115.87 (+0.54%)</div>
+          </div>
+          <div class="market-col">
+            <div class="market-col-title">櫃買</div>
+            <div class="market-value">227.67</div>
+            <div class="market-change up">+1.12 (+0.49%)</div>
+          </div>
+          <div class="market-col">
+            <div class="market-col-title">台指期</div>
+            <div class="market-value">21396</div>
+            <div class="market-change down">-89 (-0.41%)</div>
+          </div>
+        </section>
+      </section>
+
+      <!-- 第二頁：我的資產明細 -->
+      <section id="screenAsset" class="screen">
+        <div class="asset-detail-header">
+          <button class="back-btn" id="assetBack">← 返回</button>
+          <div class="asset-detail-header-title">
+            <span>我的資產</span>
+          </div>
+          <div style="width:40px;"></div>
+        </div>
+
+        <div class="asset-detail-top">
+          <div class="asset-month" id="assetMonthLabel">2025 年 10 月</div>
+          <div class="chart-toggle">
+            <button class="chart-toggle-btn active">＄</button>
+            <button class="chart-toggle-btn">%</button>
+          </div>
+        </div>
+
+        <div id="chartBars" class="chart-bars">
+          <!-- JS 會動態塞入長條圖 -->
+        </div>
+
+        <!-- 含息設定 -->
+        <div class="asset-toggle-row">
+          <div>累計配息</div>
+          <div class="toggle-buttons" id="interestToggle">
+            <button class="pill-btn active" data-mode="include">含配息</button>
+            <button class="pill-btn" data-mode="exclude">不含配息</button>
+          </div>
+        </div>
+
+        <!-- 新增：已實現 / 未實現 -->
+        <div class="asset-toggle-row">
+          <div>損益類型</div>
+          <div class="toggle-buttons" id="realizedToggle">
+            <button class="pill-btn active" data-mode="realized">已實現損益</button>
+            <button class="pill-btn" data-mode="unrealized">未實現損益</button>
+          </div>
+        </div>
+
+        <!-- 新增：複利 Yes / No -->
+        <div class="asset-toggle-row">
+          <div>是否複利</div>
+          <div class="toggle-buttons" id="compoundToggle">
+            <button class="pill-btn active" data-mode="yes">Yes</button>
+            <button class="pill-btn" data-mode="no">No</button>
+          </div>
+        </div>
+
+        <div class="asset-range-row" id="rangeRow">
+          <button class="pill-btn active" data-range="1D">1日</button>
+          <button class="pill-btn" data-range="1M">1月</button>
+          <button class="pill-btn" data-range="1Y">1年</button>
+        </div>
+
+        <div class="asset-summary-cards">
+          <div class="summary-card summary-market">
+            <div class="summary-label">總市值 (NTD)</div>
+            <div class="summary-value" id="valueMarket">--</div>
+          </div>
+          <div class="summary-card summary-cost">
+            <div class="summary-label">總成本 (NTD)</div>
+            <div class="summary-value" id="valueCost">--</div>
+          </div>
+          <div class="summary-card summary-profit">
+            <div class="summary-label">總損益 (NTD)</div>
+            <div class="summary-value" id="valueProfit">--</div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Bottom Nav -->
+    <nav class="bottom-nav" id="bottomNav">
+      <div class="nav-item active">
+        <div class="nav-icon">🏠</div>
+        <div>首頁</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">⭐</div>
+        <div>自選</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">💹</div>
+        <div>下單</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">📄</div>
+        <div>帳務</div>
+      </div>
+      <div class="nav-item">
+        <div class="nav-icon">⋯</div>
+        <div>更多</div>
+      </div>
+    </nav>
+  </div>
+
+  <script>
+    // -------- 第一頁互動 --------
+    document.getElementById("marketTabs").addEventListener("click", function (e) {
+      const tab = e.target.closest(".market-tab");
+      if (!tab) return;
+      this.querySelectorAll(".market-tab").forEach(t => t.classList.remove("active"));
+      tab.classList.add("active");
+    });
+
+    document.getElementById("calendarRow").addEventListener("click", function (e) {
+      const day = e.target.closest(".calendar-day");
+      if (!day) return;
+      this.querySelectorAll(".calendar-day").forEach(d => d.classList.remove("active"));
+      day.classList.add("active");
+    });
+
+    document.getElementById("bottomNav").addEventListener("click", function (e) {
+      const item = e.target.closest(".nav-item");
+      if (!item) return;
+      this.querySelectorAll(".nav-item").forEach(i => i.classList.remove("active"));
+      item.classList.add("active");
+    });
+
+    const screenHome = document.getElementById("screenHome");
+    const screenAsset = document.getElementById("screenAsset");
+
+    function showHome() {
+      screenHome.classList.add("active");
+      screenAsset.classList.remove("active");
+    }
+
+    function showAsset() {
+      screenHome.classList.remove("active");
+      screenAsset.classList.add("active");
+    }
+
+    document.getElementById("assetCard").addEventListener("click", showAsset);
+    document.getElementById("assetBack").addEventListener("click", showHome);
+
+    // -------- 第二頁：假資料與圖表邏輯 --------
+    const baseData = { "1D": [], "1M": [], "1Y": [] };
+
+    (function initBaseData() {
+      // 1D - 近 7 日（例如 10/25~10/31）
+      // 放大到幾千萬級距
+      for (let d = 25; d <= 31; d++) {
+        const label = String(d).padStart(2, " "); // 25~31
+        const rawBaseCost = 110000 + d * 800;
+        const baseCost = rawBaseCost * 500;      // 約 5 千萬等級
+        const mv = baseCost * 1.2;               // 假設市值比成本高 20%
+
+        baseData["1D"].push({
+          label,
+          mv: Math.round(mv),
+          cost: Math.round(baseCost)
+        });
+      }
+
+      // 覆蓋第 0 筆資料，第一根 bar = 66,000,000 / 55,000,000
+      baseData["1D"][0] = {
+        ...baseData["1D"][0],
+        mv: 66000000,
+        cost: 55000000
+      };
+
+      // 1M - 12 個月，放大到幾千萬級距
+      for (let m = 1; m <= 12; m++) {
+        const label = String(m).padStart(2, "0");
+        const rawBaseCost = 115000 + m * 3500;
+        const baseCost = rawBaseCost * 400;      // 約 4 千萬等級
+        const factor = 1.10 + (m % 4) * 0.02;    // 1.10, 1.12, 1.14, 1.16
+        const mv = baseCost * factor;
+
+        baseData["1M"].push({
+          label,
+          mv: Math.round(mv),
+          cost: Math.round(baseCost)
+        });
+      }
+
+      // 1Y - 10 年: 2015~2024，放大到幾千萬級距
+      for (let y = 2015; y < 2015 + 10; y++) {
+        const label = String(y);
+        const rawBaseCost = 90000 + (y - 2015) * 9000;
+        const baseCost = rawBaseCost * 500;           // 約 4.5 千萬 ~ 8 千萬
+        const factor = 1.08 + ((y - 2015) % 3) * 0.03; // 1.08, 1.11, 1.14
+        const mv = baseCost * factor;
+
+        baseData["1Y"].push({
+          label,
+          mv: Math.round(mv),
+          cost: Math.round(baseCost)
+        });
+      }
+    })();
+
+    let currentRange = "1D";
+    let includeInterest = true;
+    let currentIndex = 0;
+
+    // 新增：損益類型 / 複利 狀態變數（目前僅紀錄狀態，尚未改變計算公式）
+    let realizedMode = "realized"; // "realized" or "unrealized"
+    let compoundMode = "yes";      // "yes" or "no"
+
+    const chartBars = document.getElementById("chartBars");
+    const valueMarket = document.getElementById("valueMarket");
+    const valueCost = document.getElementById("valueCost");
+    const valueProfit = document.getElementById("valueProfit");
+    const assetMonthLabel = document.getElementById("assetMonthLabel");
+
+    function formatNumber(num) {
+      return num.toLocaleString("zh-TW", { maximumFractionDigits: 0 });
+    }
+
+    function updateRangeLabel() {
+      if (currentRange === "1D") {
+        assetMonthLabel.textContent = "2025 年 10 月";
+      } else if (currentRange === "1M") {
+        assetMonthLabel.textContent = "2025 年";
+      } else {
+        assetMonthLabel.textContent = "2015 年 - 2025 年";
+      }
+    }
+
+    function getDisplayedData() {
+      const raw = baseData[currentRange].map(obj => ({ ...obj }));
+      if (!includeInterest) {
+        // 不含息：原始資料
+        return raw;
+      }
+      // 含息：市值 +2%，成本 +1% （簡單模擬）
+      return raw.map(d => ({
+        label: d.label,
+        mv: Math.round(d.mv * 1.02),
+        cost: Math.round(d.cost * 1.01)
+      }));
+    }
+
+    function renderChart() {
+      updateRangeLabel();
+
+      const data = getDisplayedData();
+      const maxVal = Math.max(...data.map(d => Math.max(d.mv, d.cost)));
+      chartBars.innerHTML = "";
+
+      data.forEach((d, idx) => {
+        const group = document.createElement("div");
+        group.className = "bar-group";
+        group.dataset.index = idx;
+
+        if (idx === currentIndex) group.classList.add("active");
+
+        const marketBar = document.createElement("div");
+        marketBar.className = "bar bar-market";
+        marketBar.style.height = (20 + (d.mv / maxVal) * 70) + "%";
+
+        const costBar = document.createElement("div");
+        costBar.className = "bar bar-cost";
+        costBar.style.height = (20 + (d.cost / maxVal) * 70) + "%";
+
+        const label = document.createElement("div");
+        label.className = "bar-label";
+        label.textContent = d.label;
+
+        group.appendChild(costBar);
+        group.appendChild(marketBar);
+        group.appendChild(label);
+        chartBars.appendChild(group);
+      });
+
+      updateSummary();
+    }
+
+    function updateSummary() {
+      const data = getDisplayedData();
+      if (!data[currentIndex]) return;
+      const d = data[currentIndex];
+      const profit = d.mv - d.cost;
+
+      valueMarket.textContent = formatNumber(d.mv);
+      valueCost.textContent = formatNumber(d.cost);
+      valueProfit.textContent = formatNumber(profit);
+
+      valueProfit.classList.remove("positive", "negative");
+      if (profit > 0) valueProfit.classList.add("positive");
+      else if (profit < 0) valueProfit.classList.add("negative");
+
+      chartBars.querySelectorAll(".bar-group").forEach((g, idx) => {
+        g.classList.toggle("active", idx === currentIndex);
+      });
+    }
+
+    chartBars.addEventListener("click", function (e) {
+      const group = e.target.closest(".bar-group");
+      if (!group) return;
+      currentIndex = Number(group.dataset.index);
+      updateSummary();
+    });
+
+    // 含息 / 不含息
+    document.getElementById("interestToggle").addEventListener("click", function (e) {
+      const btn = e.target.closest(".pill-btn");
+      if (!btn) return;
+      this.querySelectorAll(".pill-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      includeInterest = btn.dataset.mode === "include";
+      currentIndex = 0;
+      renderChart();
+    });
+
+    // 新增：已實現 / 未實現
+    document.getElementById("realizedToggle").addEventListener("click", function (e) {
+      const btn = e.target.closest(".pill-btn");
+      if (!btn) return;
+      this.querySelectorAll(".pill-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      realizedMode = btn.dataset.mode; // "realized" or "unrealized"
+      // 目前僅切換 UI 狀態，如要影響數值，可在這裡呼叫 renderChart() 或調整計算邏輯
+    });
+
+    // 新增：複利 Yes / No
+    document.getElementById("compoundToggle").addEventListener("click", function (e) {
+      const btn = e.target.closest(".pill-btn");
+      if (!btn) return;
+      this.querySelectorAll(".pill-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      compoundMode = btn.dataset.mode; // "yes" or "no"
+      // 同上，目前先記錄狀態，未實際套用在計算
+    });
+
+    // 1日 / 1月 / 1年
+    document.getElementById("rangeRow").addEventListener("click", function (e) {
+      const btn = e.target.closest(".pill-btn");
+      if (!btn) return;
+      this.querySelectorAll(".pill-btn").forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentRange = btn.dataset.range;
+      currentIndex = 0;
+      renderChart();
+    });
+
+    // 初始化第二頁圖表
+    renderChart();
+  </script>
+</body>
+</html>
