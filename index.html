@@ -308,6 +308,108 @@
       color: var(--up-red);
     }
 
+    /* 🔹 AI 聊天室區塊樣式（新增） */
+    .ai-section {
+      margin-top: 10px;
+      background: var(--bg-card);
+      border-radius: 10px;
+      padding: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+    }
+
+    .ai-header {
+      display: flex;
+      align-items: center;
+      border-bottom: 1px solid #e1e8f2;
+      padding-bottom: 6px;
+      margin-bottom: 8px;
+    }
+
+    .ai-bot-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #e3f3ff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      margin-right: 8px;
+      flex-shrink: 0;
+    }
+
+    .ai-header-text-small {
+      font-size: 12px;
+      color: #2f6ca0;
+      font-weight: 700;
+    }
+
+    .ai-header-text-main {
+      font-size: 15px;
+      font-weight: 700;
+      color: #111;
+      margin-top: 2px;
+    }
+
+    .ai-chat-box {
+      background: #f5f8fc;
+      border-radius: 8px;
+      padding: 8px;
+      font-size: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      max-height: 150px;
+      overflow-y: auto;
+    }
+
+    .ai-bubble {
+      padding: 6px 8px;
+      border-radius: 12px;
+      max-width: 80%;
+      line-height: 1.4;
+    }
+
+    .ai-bubble.bot {
+      background: #ffffff;
+      border: 1px solid #d6e2f0;
+      align-self: flex-start;
+    }
+
+    .ai-bubble.user {
+      background: #4a9fe6;
+      color: #fff;
+      align-self: flex-end;
+    }
+
+    .ai-input-row {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      font-size: 12px;
+    }
+
+    .ai-input-row input {
+      flex: 1;
+      border-radius: 999px;
+      border: 1px solid #d6e2f0;
+      padding: 6px 10px;
+      font-size: 12px;
+      outline: none;
+    }
+
+    .ai-input-row button {
+      border: none;
+      border-radius: 999px;
+      padding: 6px 10px;
+      font-size: 12px;
+      background: #4a9fe6;
+      color: #fff;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
     /* Bottom navigation */
     .bottom-nav {
       position: absolute;
@@ -689,6 +791,21 @@
             <div class="market-change down">-89 (-0.41%)</div>
           </div>
         </section>
+         <!-- 🔹 AI 聊天機器人區塊（放在原本空白處） -->
+        <section class="ai-section">
+          <div class="ai-header">
+            <div class="ai-bot-icon">🤖</div>
+            <div>
+              <div class="ai-header-text-small">AI 邦寶Q</div>
+            </div>
+          </div>
+
+          <div class="ai-input-row">
+            <input type="text" placeholder="試著問問：幫我整理本週持股重點…" />
+            <button type="button">送出</button>
+          </div>
+        </section>
+      </section>
       </section>
 
       <!-- 第二頁：我的資產明細 -->
